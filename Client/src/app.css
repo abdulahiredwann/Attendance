@@ -1,0 +1,37 @@
+.sidebar-nav .has-arrow::after {
+    position: absolute;
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-width: 1px 0 0 1px;
+    border-style: solid;
+    border-color: var(--bs-dark-text-emphasis);
+    margin-left: 10px;
+    transform: rotate(-135deg) translate(0, -50%);
+    transform-origin: top;
+    top: 21px;
+    right: 16px;
+    transition: all .3s ease-out;}
+
+
+    /* Style for the parent link */
+
+  /* Dropdown arrow animation */
+
+  
+  /* Rotated arrow when dropdown is open */
+  .sidebar-nav .has-arrow.open::after {
+    transform: rotate(45deg) translate(0, -50%);
+  }
+  
+  /* Style for the dropdown menu */
+  .sidebar-nav .collapse {
+    display: none; /* Hidden by default */
+    padding-left: 20px;
+    list-style: none;
+  }
+  
+  .sidebar-nav .collapse.show {
+    display: block; /* Show dropdown when active */
+  }
+  
