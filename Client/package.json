@@ -9,11 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.10.0",
     "@iconify/react": "^5.2.0",
+    "axios": "^1.7.9",
     "preact": "^10.25.3",
+    "react-hook-form": "^7.54.2",
     "react-hot-toast": "^2.5.1",
     "react-icons": "^5.4.0",
-    "react-router-dom": "^7.1.1"
+    "react-router-dom": "^7.1.1",
+    "react-time-picker": "^7.0.0",
+    "sweetalert2": "^11.15.10",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.9.3",

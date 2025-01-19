@@ -27,7 +27,7 @@ function HrManagerSideBar() {
         <div className="brand-logo d-flex align-items-center justify-content-between">
           <a href="" className="text-nowrap logo-img">
             <img
-              src="../assets/images/logos/ctech.png"
+              src="/images/logos/ctech.png"
               alt=""
               style={{ height: "50px" }}
             />
@@ -151,13 +151,16 @@ function HrManagerSideBar() {
                   </a>
                 </li>
                 <li className="sidebar-item">
-                  <a
-                    className="sidebar-link"
-                    href="../main/frontend-aboutpage.html"
+                  <NavLink
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                    to="/manager/add/employee"
+                    aria-expanded="false"
                   >
                     <FaArrowRightLong />
-                    Add Employee
-                  </a>
+                    Add Employees
+                  </NavLink>
                 </li>
               </ul>
             </li>
@@ -219,22 +222,40 @@ function HrManagerSideBar() {
                 aria-expanded={dropdownState["Setting"] || false}
               >
                 <li className="sidebar-item">
-                  <a
-                    className="sidebar-link"
-                    href="../main/frontend-landingpage.html"
+                  <NavLink
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                    to="/manager/add/users"
+                    aria-expanded="false"
                   >
                     <FaArrowRightLong />
                     Add Users
-                  </a>
+                  </NavLink>
                 </li>
                 <li className="sidebar-item">
-                  <a
-                    className="sidebar-link"
-                    href="../main/frontend-aboutpage.html"
+                  <NavLink
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                    to="/manager/shift/management"
+                    aria-expanded="false"
                   >
                     <FaArrowRightLong />
                     Shift Management
-                  </a>
+                  </NavLink>
+                </li>
+                <li className="sidebar-item">
+                  <NavLink
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                    to="/manager/shift/add"
+                    aria-expanded="false"
+                  >
+                    <FaArrowRightLong />
+                    Add Shift
+                  </NavLink>
                 </li>
               </ul>
             </li>

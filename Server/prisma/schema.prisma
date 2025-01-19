@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  HR_MANAGER
+}
+
+enum SEX {
+  MALE
+  FEMALE
+}
+
+model User {
+  id                    Int      @id @default(autoincrement())
+  firstName             String
+  middleName            String
+  lastName              String
+  email                 String   @unique
+  phoneNumber           String
+  password              String
+  region                String
+  city                  String
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  role                  Role
+}
+
+model Position {
+  id       Int        @id @default(autoincrement())
+  name     String
+  Employee Employee[]
+}
+
+model Employee {
+  id                    Int          @id @default(autoincrement())
+  firstName             String
+  middleName            String
+  lastName              String
+  email                 String       @unique
+  gender                SEX
+  positionId            Int
+  Position              Position     @relation(fields: [positionId], references: [id])
+  phoneNumber           String
+  password              String
+  region                String
+  city                  String
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  idCard                String
+  profilePicture        String
+  shiftId               Int
+  shifts                Shift        @relation(fields: [shiftId], references: [id])
+  bankAccountNumber     String
+  monthlySalary         Float
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  Attendance            Attendance[]
+  Payment               Payment[]
+}
+
+model Shift {
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  description          String?
+  morningIn            DateTime
+  morningOut           DateTime
+  afternoonIn          DateTime
+  afternoonOut         DateTime
+  allowedLateMinutes   Int
+  totalServerdHrPerDay Float
+  scantimeOut          Int
+
+  Employee Employee[]
+}
+
+enum StatusAttendance {
+  PENDING
+  DONE
+}
+
+model Attendance {
+  id                     Int              @id @default(autoincrement())
+  employeeId             Int
+  Employee               Employee         @relation(fields: [employeeId], references: [id])
+  date                   DateTime
+  morningIn              DateTime?
+  morningInDifference    Int?
+  morningOut             DateTime?
+  morningOutDifference   Int?
+  afternoonIn            DateTime?
+  afternoonInDifference  Int?
+  afternoonOut           DateTime?
+  afternoonOutDifference Int?
+  overTime               Int?
+  totalServerdHr         Int?
+  totalDiffrence         Int?
+  description            String?
+  status                 StatusAttendance @default(PENDING)
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  CANCELED
+}
+
+model Payment {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  Employee   Employee @relation(fields: [employeeId], references: [id])
+
+  startDate      DateTime
+  EndDate        DateTime
+  totalServerdHr Int
+  totalDiffrence Int
+  price          Float
+  discharge      Float
+  bonus          Float
+  status         PaymentStatus
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
