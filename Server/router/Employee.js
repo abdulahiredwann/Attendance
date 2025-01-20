@@ -32,10 +32,10 @@ router.post("/create-employee", upload, async (req, res) => {
     const {
       firstName,
       middleName,
+      age,
       lastName,
       email,
       phoneNumber,
-      password,
       region,
       city,
       emergencyContactName,
@@ -53,8 +53,10 @@ router.post("/create-employee", upload, async (req, res) => {
       return res.status(400).send(error.details[0].message);
     }
 
+    // Default Password
+    const defaultPassword = "12345678";
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
     // Check if email already exists
     const existingEmployee = await prisma.employee.findUnique({
@@ -109,6 +111,7 @@ router.post("/create-employee", upload, async (req, res) => {
         monthlySalary: parseFloat(monthlySalary),
         positionId: parseInt(position),
         gender,
+        age: parseInt(age),
       },
     });
 
@@ -119,4 +122,34 @@ router.post("/create-employee", upload, async (req, res) => {
   }
 });
 
+// info for creating employee
+router.get("/get-info-create", async (req, res) => {
+  try {
+    const shift = await prisma.shift.findMany({ orderBy: { name: "asc" } });
+    const position = await prisma.position.findMany({
+      orderBy: { name: "asc" },
+    });
+    res.status(200).json({ position, shift });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server Error!" });
+  }
+});
+
+//create new postition
+router.post("/create-position", async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ error: "Name is required!" });
+    }
+    await prisma.position.create({
+      data: { name: name },
+    });
+    res.status(201).json({ message: "Postition Created Succfully!" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+});
 module.exports = router;

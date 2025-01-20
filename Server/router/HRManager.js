@@ -139,6 +139,7 @@ router.get("/get-shift", async (req, res) => {
       include: {
         Employee: {
           select: {
+            id: true,
             firstName: true,
             lastName: true,
             middleName: true,
@@ -212,4 +213,38 @@ router.post("/create-user", async (req, res) => {
   }
 });
 
+// get employees
+router.get("/get-edmployee", async (req, res) => {
+  try {
+    const employee = await prisma.employee.findMany({
+      orderBy: { firstName: "asc" },
+      select: {
+        id: true,
+        age: true,
+        bankAccountNumber: true,
+        city: true,
+        email: true,
+        emergencyContactName: true,
+        emergencyContactPhone: true,
+        firstName: true,
+        gender: true,
+        idCard: true,
+        lastName: true,
+        middleName: true,
+        monthlySalary: true,
+        Payment: true,
+        phoneNumber: true,
+        profilePicture: true,
+        region: true,
+        shifts: { select: { name: true } },
+        createdAt: true,
+        Position: { select: { name: true } },
+      },
+    });
+    res.status(200).json({ employee });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+});
 module.exports = router;

@@ -53,6 +53,7 @@ model Employee {
   lastName              String
   email                 String       @unique
   gender                SEX
+  age                   Int
   positionId            Int
   Position              Position     @relation(fields: [positionId], references: [id])
   phoneNumber           String

@@ -4,6 +4,7 @@ function validateEmployee(employee) {
     firstName: Joi.string().min(2).max(50).required(),
     gender: Joi.string().valid("MALE", "FEMALE").required(),
     middleName: Joi.string().min(2).max(50).required(),
+    age: Joi.number().integer().min(6).max(100).required(),
     lastName: Joi.string().min(2).max(50).required(),
     email: Joi.string().email().required(),
     phoneNumber: Joi.string()
@@ -12,7 +13,6 @@ function validateEmployee(employee) {
       .messages({
         "string.pattern.base": "Phone number must be between 10 to 15 digits.",
       }),
-    password: Joi.string().min(8).max(100).required(),
     region: Joi.string().min(2).max(100).required(),
     city: Joi.string().min(2).max(100).required(),
     emergencyContactName: Joi.string().min(2).max(50).optional(),

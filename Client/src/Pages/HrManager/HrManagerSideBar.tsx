@@ -142,13 +142,16 @@ function HrManagerSideBar() {
                 aria-expanded={dropdownState["employee"] || false}
               >
                 <li className="sidebar-item">
-                  <a
-                    className="sidebar-link"
-                    href="../main/frontend-landingpage.html"
+                  <NavLink
+                    className={({ isActive }) =>
+                      `sidebar-link ${isActive ? "active" : ""}`
+                    }
+                    to="/manager/employee/list"
+                    aria-expanded="false"
                   >
                     <FaArrowRightLong />
                     Employees List
-                  </a>
+                  </NavLink>
                 </li>
                 <li className="sidebar-item">
                   <NavLink

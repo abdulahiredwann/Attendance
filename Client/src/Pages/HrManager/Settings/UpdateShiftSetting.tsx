@@ -1,12 +1,12 @@
-import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React from "preact/compat";
+import { useEffect, useState } from "preact/hooks";
 import { useForm } from "react-hook-form";
 import { MdModeEdit } from "react-icons/md";
-import { Shift } from "./ShiftManagement";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "preact/hooks";
-import React from "preact/compat";
-import api from "../../../Services/api";
 import Swal from "sweetalert2";
+import { z } from "zod";
+import api from "../../../Services/api";
+import { Shift } from "./ShiftManagement";
 
 // Define schema using zod
 const schema = z.object({

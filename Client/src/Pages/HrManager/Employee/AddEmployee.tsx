@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
+import { z } from "zod";
 import api from "../../../Services/api";
-import { CiBookmarkPlus } from "react-icons/ci";
+import AddNewPosition from "./AddNewPosition";
 
 interface Shift {
   id: number;
@@ -15,12 +16,19 @@ interface Position {
 }
 // Validation Schema
 const employeeSchema = z.object({
-  firstName: z.string().min(1, "First Name is required"),
-  middleName: z.string().optional(),
-  lastName: z.string().min(1, "Last Name is required"),
+  firstName: z.string().min(2, "First Name is required"),
+  middleName: z.string().min(2, "MidleName is required!"),
+  gender: z.enum(["MALE", "FEMALE"]).refine((val) => val !== undefined, {
+    message: "Gender is required",
+  }),
+  lastName: z.string().min(2, "Last Name is required"),
   email: z.string().email("Invalid email address"),
-  phoneNumber: z.string().min(10, "Phone Number must be at least 10 digits"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  age: z
+    .number()
+    .min(6, "Age must be at least 6")
+    .max(100, "Age must be at most 100"),
+  phoneNumber: z.string().min(9, "Phone Number must be at least 9 digits"),
+
   region: z.string().min(1, "Region is required"),
   city: z.string().min(1, "City is required"),
   emergencyContactName: z.string().optional(),
@@ -49,7 +57,7 @@ function AddEmployee() {
   });
   useEffect(() => {
     const fetch = async () => {
-      const response = await api.get("/hrmanager/get-info-create");
+      const response = await api.get("/employee/get-info-create");
       setPosition(response.data.position);
       setShifts(response.data.shift);
     };
@@ -73,18 +81,22 @@ function AddEmployee() {
         }
       });
 
-      const response = await api.post("/employees/create-employee", formData, {
+      const response = await api.post("/employee/create-employee", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response.status === 201) {
-        alert("Employee created successfully!");
-      } else {
-        alert(response.data.error || "Error creating employee.");
-      }
-    } catch (error) {
+      Swal.fire({
+        icon: "success",
+        title: "New Employee Created!",
+        text: response.data.message || "Employee created Succefully",
+      });
+    } catch (error: any) {
       console.error("Error:", error);
-      alert("An unexpected error occurred.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.error || "Error Create Employee!",
+      });
     } finally {
       setLoading(false);
     }
@@ -196,25 +208,43 @@ function AddEmployee() {
                   )}
                 </div>
 
-                {/* Password */}
+                {/* Gender */}
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="password" className="form-label">
-                    Password
+                  <label htmlFor="gender" className="form-label">
+                    Gender
                   </label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    placeholder="Enter password"
-                    {...register("password")}
-                  />
-                  {errors.password && (
+                  <select
+                    className="form-select"
+                    id="gender"
+                    {...register("gender")}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="MALE">Male</option>
+                    <option value="FEMALE">Female</option>
+                  </select>
+                  {errors.gender && (
                     <small className="text-danger">
-                      {errors.password.message}
+                      {errors.gender.message}
                     </small>
                   )}
                 </div>
 
+                {/* Age */}
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="age" className="form-label">
+                    Age
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="age"
+                    placeholder="Enter age"
+                    {...register("age", { valueAsNumber: true })}
+                  />
+                  {errors.age && (
+                    <small className="text-danger">{errors.age.message}</small>
+                  )}
+                </div>
                 {/* Region */}
                 <div className="col-md-6 mb-3">
                   <label htmlFor="region" className="form-label">
@@ -332,7 +362,7 @@ function AddEmployee() {
                     className="form-control"
                     id="monthlySalary"
                     placeholder="Enter monthly salary"
-                    {...register("monthlySalary")}
+                    {...register("monthlySalary", { valueAsNumber: true })}
                   />
                   {errors.monthlySalary && (
                     <small className="text-danger">
@@ -428,36 +458,7 @@ function AddEmployee() {
                 )}
               </button>
             </div>
-            {newPositionVisible && (
-              <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="newPosition" className="form-label">
-                    New Position Name
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="newPosition"
-                    placeholder="Enter new position name"
-                    //   {...register("newPosition")}
-                  />
-                </div>
-                <div className="text-end">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={loading}
-                  >
-                    <span className="mr-4">
-                      {" "}
-                      <CiBookmarkPlus size={20} />
-                    </span>
-
-                    {loading ? "Submitting..." : "Add Position"}
-                  </button>
-                </div>
-              </div>
-            )}
+            {newPositionVisible && <AddNewPosition></AddNewPosition>}
           </div>
         </div>
       </div>

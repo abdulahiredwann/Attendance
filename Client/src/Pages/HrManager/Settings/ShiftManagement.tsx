@@ -72,7 +72,7 @@ function ShiftManagement() {
       <div className="row">
         {shifts.map((shift) => (
           <>
-            {selectedShift ? (
+            {selectedShift?.id === shift.id ? (
               <UpdateShiftSetting
                 shift={selectedShift}
                 onCancel={handleCancelUpdate}

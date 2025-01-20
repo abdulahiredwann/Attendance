@@ -35,6 +35,7 @@ CREATE TABLE `Employee` (
     `lastName` VARCHAR(191) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `gender` ENUM('MALE', 'FEMALE') NOT NULL,
+    `age` INTEGER NOT NULL,
     `positionId` INTEGER NOT NULL,
     `phoneNumber` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
