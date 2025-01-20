@@ -247,4 +247,40 @@ router.get("/get-edmployee", async (req, res) => {
     res.status(500).json({ error: "Server Error" });
   }
 });
+router.get("/get-edmploye/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const employee = await prisma.employee.findFirst({
+      where: { id: parseInt(id) },
+      orderBy: { firstName: "asc" },
+      select: {
+        id: true,
+        age: true,
+        bankAccountNumber: true,
+        city: true,
+        email: true,
+        emergencyContactName: true,
+        emergencyContactPhone: true,
+        firstName: true,
+        gender: true,
+        idCard: true,
+        lastName: true,
+        middleName: true,
+        monthlySalary: true,
+        Payment: true,
+        phoneNumber: true,
+        profilePicture: true,
+        region: true,
+        shifts: { select: { name: true } },
+        createdAt: true,
+        Position: { select: { name: true } },
+      },
+    });
+    res.status(200).json({ employee });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+});
 module.exports = router;

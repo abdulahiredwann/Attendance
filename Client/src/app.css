@@ -35,3 +35,9 @@
     display: block; /* Show dropdown when active */
   }
   
+
+.t-dot {
+    position: relative;
+    border-color: #4361ee;
+    padding: 10px;
+    } 

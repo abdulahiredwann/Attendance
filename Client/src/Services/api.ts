@@ -6,7 +6,7 @@ const api  = axios.create({
 })
 
 
-const nPoint = 'http://localhost:4000'
+const nPoint = 'http://localhost:4000/'
 
 export default api
 export {CanceledError, nPoint}

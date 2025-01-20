@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const path = require("path");
 const app = express();
 const http = require("http");
 const employee = require("./router/Employee");
@@ -17,6 +18,9 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
 });
 const PORT = process.env.PORT || 4000;
+
+app.use("/Images", express.static(path.join(__dirname, "Images")));
+app.use(express.static("public"));
 
 db.connect((err) => {
   if (err) {

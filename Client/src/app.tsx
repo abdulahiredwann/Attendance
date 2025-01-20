@@ -15,6 +15,8 @@ import AddShift from "./Pages/HrManager/Settings/AddShift";
 import AddUsers from "./Pages/HrManager/Settings/AddUsers";
 import AddEmployee from "./Pages/HrManager/Employee/AddEmployee";
 import EmployeeList from "./Pages/HrManager/Employee/EmployeeList";
+import SeeDetails from "./Pages/HrManager/Employee/SeeDetails";
+import EditEmployee from "./Pages/HrManager/Employee/EditEmployee";
 
 export function App() {
   return (
@@ -37,6 +39,14 @@ export function App() {
             <Route
               path="employee/list"
               element={<EmployeeList></EmployeeList>}
+            ></Route>
+            <Route
+              path="employee/:id"
+              element={<SeeDetails></SeeDetails>}
+            ></Route>
+            <Route
+              path="employee/edit/:id"
+              element={<EditEmployee></EditEmployee>}
             ></Route>
           </Route>
         </Routes>

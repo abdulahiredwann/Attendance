@@ -1,7 +1,8 @@
 import { useEffect, useState } from "preact/hooks";
 import api from "../../../Services/api";
+import { useNavigate } from "react-router-dom";
 
-interface Employees {
+export interface Employees {
   id: number;
   age: number;
   bankAccountNumber: string;
@@ -29,6 +30,10 @@ interface Employees {
 }
 function EmployeeList() {
   const [employees, setEmployees] = useState<Employees[]>([]);
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   useEffect(() => {
     fetch();
   }, []);
@@ -40,8 +45,48 @@ function EmployeeList() {
       console.log(error);
     }
   };
+
+  const filteredEmployees = employees.filter((employee) =>
+    `${employee.firstName} ${employee.middleName} ${employee.lastName} ${employee.email}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+  const paginatedEmployees = filteredEmployees.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
   return (
     <>
+      <div className="row justify-content-start mb-4">
+        <div className="col-lg-4 col-md-8 col-sm-10">
+          <div className="input-group shadow-sm rounded-3 bg-white">
+            <span className="input-group-text bg-transparent border-0">
+              <i className="ti ti-search text-muted"></i>
+            </span>
+            <input
+              type="text"
+              className="form-control border-0 shadow-none"
+              placeholder="Search employees "
+              value={searchTerm}
+              onChange={(e) => {
+                if (e.target) {
+                  setSearchTerm((e.target as HTMLInputElement).value);
+                }
+              }}
+            />
+            {searchTerm && (
+              <button
+                className="btn btn-link text-danger p-0 px-3"
+                onClick={() => setSearchTerm("")}
+              >
+                <i className="ti ti-x"></i>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="table-responsive mb-4 border rounded-1">
         <table className="table text-nowrap mb-0 align-middle">
           <thead className="text-dark fs-4">
@@ -62,7 +107,7 @@ function EmployeeList() {
             </tr>
           </thead>
           <tbody>
-            {employees.map((employee) => (
+            {paginatedEmployees.map((employee) => (
               <>
                 <tr>
                   <td>
@@ -73,9 +118,16 @@ function EmployeeList() {
                         width={40}
                         height={40}
                       />
-                      <div className="ms-3">
+                      <div
+                        className="ms-3"
+                        data-bs-toggle="tooltip"
+                        title={`${employee.email}`}
+                      >
                         <h6 className="fs-4 fw-semibold mb-0">
-                          {employee.firstName}
+                          <a href={`/manager/employee/${employee.id}`}>
+                            {employee.firstName} {employee.middleName}{" "}
+                            {employee.lastName}
+                          </a>
                         </h6>
                         <span className="fw-normal">{employee.email}</span>
                       </div>
@@ -90,7 +142,7 @@ function EmployeeList() {
                     </span>
                   </td>
                   <td>
-                    <span className="badge bg-primary-subtle text-primary">
+                    <span className="badge bg-success-subtle text-success">
                       active
                     </span>
                   </td>
@@ -110,6 +162,17 @@ function EmployeeList() {
                         aria-labelledby="dropdownMenuButton"
                         style={{}}
                       >
+                        <li>
+                          <a
+                            className="dropdown-item d-flex align-items-center gap-3"
+                            onClick={() =>
+                              navigate(`/manager/employee/${employee.id}`)
+                            }
+                          >
+                            <i className="fs-4 ti ti-eye" />
+                            See Details
+                          </a>
+                        </li>
                         <li>
                           <a
                             className="dropdown-item d-flex align-items-center gap-3"
@@ -136,6 +199,25 @@ function EmployeeList() {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="d-flex justify-content-end align-items-center mt-3">
+        <ul className="pagination mb-0">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <li
+              key={index}
+              className={`page-item ${
+                currentPage === index + 1 ? "active" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage(index + 1)}
+              >
+                {index + 1}
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </>
   );
