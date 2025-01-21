@@ -157,14 +157,6 @@ router.get("/get-shift", async (req, res) => {
   }
 });
 
-router.get("/get-employee", async (req, res) => {
-  try {
-    const employees = await prisma.employee.findMany({
-      orderBy: { firstName: "asc" },
-    });
-  } catch (error) {}
-});
-
 router.post("/create-user", async (req, res) => {
   try {
     const {
@@ -214,10 +206,11 @@ router.post("/create-user", async (req, res) => {
 });
 
 // get employees
-router.get("/get-edmployee", async (req, res) => {
+router.get("/get-employee", async (req, res) => {
   try {
     const employee = await prisma.employee.findMany({
       orderBy: { firstName: "asc" },
+      where: { is_Active: "TRUE" },
       select: {
         id: true,
         age: true,
@@ -236,9 +229,9 @@ router.get("/get-edmployee", async (req, res) => {
         phoneNumber: true,
         profilePicture: true,
         region: true,
-        shifts: { select: { name: true } },
+        shifts: { select: { name: true, id: true } },
         createdAt: true,
-        Position: { select: { name: true } },
+        Position: { select: { name: true, id: true } },
       },
     });
     res.status(200).json({ employee });
@@ -247,7 +240,7 @@ router.get("/get-edmployee", async (req, res) => {
     res.status(500).json({ error: "Server Error" });
   }
 });
-router.get("/get-edmploye/:id", async (req, res) => {
+router.get("/get-employe/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -272,9 +265,9 @@ router.get("/get-edmploye/:id", async (req, res) => {
         phoneNumber: true,
         profilePicture: true,
         region: true,
-        shifts: { select: { name: true } },
+        shifts: { select: { name: true, id: true } },
         createdAt: true,
-        Position: { select: { name: true } },
+        Position: { select: { name: true, id: true } },
       },
     });
     res.status(200).json({ employee });

@@ -121,6 +121,111 @@ router.post("/create-employee", upload, async (req, res) => {
     console.error(error);
   }
 });
+router.put("/update-employee/:id", upload, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      firstName,
+      middleName,
+      age,
+      lastName,
+      email,
+      phoneNumber,
+      region,
+      city,
+      emergencyContactName,
+      emergencyContactPhone,
+      shiftId,
+      bankAccountNumber,
+      monthlySalary,
+      position,
+      gender,
+    } = req.body;
+
+    // Validate the employee input
+    const { error } = validateEmployee(req.body);
+    if (error) {
+      return res.status(400).send({ error: error.details[0].message });
+    }
+
+    // Verify shift and position existence
+    const shift = await prisma.shift.findUnique({
+      where: { id: parseInt(shiftId) },
+    });
+    if (!shift) {
+      return res.status(404).json({ error: "Shift not found!" });
+    }
+
+    const positionRecord = await prisma.position.findUnique({
+      where: { id: parseInt(position) },
+    });
+    if (!positionRecord) {
+      return res.status(404).json({ error: "Position not found!" });
+    }
+    // Fetch existing employee data
+    const existingEmployee = await prisma.employee.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!existingEmployee) {
+      return res.status(404).json({ error: "Employee not found!" });
+    }
+
+    // Extract file paths if new files are uploaded, otherwise keep existing ones
+    const profilePicturePath =
+      req.files?.profileImg?.[0]?.path || existingEmployee.profilePicture;
+    const idCardPath = req.files?.idImg?.[0]?.path || existingEmployee.idCard;
+
+    // Create the employee
+    await prisma.employee.update({
+      where: { id: parseInt(id) },
+      data: {
+        firstName,
+        middleName,
+        lastName,
+        email,
+        phoneNumber,
+        region,
+        city,
+        emergencyContactName,
+        emergencyContactPhone,
+        idCard: idCardPath,
+        profilePicture: profilePicturePath,
+        shiftId: parseInt(shiftId),
+        bankAccountNumber,
+        monthlySalary: parseFloat(monthlySalary),
+        positionId: parseInt(position),
+        gender,
+        age: parseInt(age),
+      },
+    });
+
+    res.status(200).json({ message: "Employee Update  successfully!" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+    console.error(error);
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const employee = await prisma.employee.findUnique({
+      where: { id: parseInt(id) },
+    });
+    if (!employee) {
+      return res.status(404).json({ error: "Employee not found " });
+    }
+
+    await prisma.employee.update({
+      where: { id: parseInt(id) },
+      data: { is_Active: "FALSE" },
+    });
+    res.status(200).json({ message: "Employee Delete Succfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+});
 
 // info for creating employee
 router.get("/get-info-create", async (req, res) => {

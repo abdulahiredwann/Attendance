@@ -23,6 +23,11 @@ enum SEX {
   FEMALE
 }
 
+enum status {
+  TRUE
+  FALSE
+}
+
 model User {
   id                    Int      @id @default(autoincrement())
   firstName             String
@@ -38,12 +43,14 @@ model User {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
   role                  Role
+  is_Active             status   @default(TRUE)
 }
 
 model Position {
-  id       Int        @id @default(autoincrement())
-  name     String
-  Employee Employee[]
+  id        Int        @id @default(autoincrement())
+  name      String
+  Employee  Employee[]
+  is_Active status     @default(TRUE)
 }
 
 model Employee {
@@ -72,10 +79,11 @@ model Employee {
   updatedAt             DateTime     @updatedAt
   Attendance            Attendance[]
   Payment               Payment[]
+  is_Active             status       @default(TRUE)
 }
 
 model Shift {
-  id                   Int      @id @default(autoincrement())
+  id                   Int        @id @default(autoincrement())
   name                 String
   description          String?
   morningIn            DateTime
@@ -85,8 +93,8 @@ model Shift {
   allowedLateMinutes   Int
   totalServerdHrPerDay Float
   scantimeOut          Int
-
-  Employee Employee[]
+  is_Active            status     @default(TRUE)
+  Employee             Employee[]
 }
 
 enum StatusAttendance {
@@ -111,6 +119,7 @@ model Attendance {
   totalServerdHr         Int?
   totalDiffrence         Int?
   description            String?
+  is_Active              status           @default(TRUE)
   status                 StatusAttendance @default(PENDING)
 }
 
@@ -133,6 +142,7 @@ model Payment {
   discharge      Float
   bonus          Float
   status         PaymentStatus
+  is_Active      status        @default(TRUE)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 }

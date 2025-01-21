@@ -26,7 +26,7 @@ function validateEmployee(employee) {
 
     shiftId: Joi.number().integer().positive().required(),
     bankAccountNumber: Joi.string()
-      .pattern(/^\d{5,30}$/)
+      .pattern(/^\d{3,30}$/)
       .required()
       .messages({
         "string.pattern.base":
@@ -34,6 +34,8 @@ function validateEmployee(employee) {
       }),
     monthlySalary: Joi.number().positive().required(),
     position: Joi.number().positive().required(),
+    idImg: Joi.any().optional(), // Allow idImg
+    profileImg: Joi.any().optional(), // Allow profileImg
   });
 
   return schema.validate(employee);

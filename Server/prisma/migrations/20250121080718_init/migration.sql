@@ -14,6 +14,7 @@ CREATE TABLE `User` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `role` ENUM('ADMIN', 'HR_MANAGER') NOT NULL,
+    `is_Active` ENUM('TRUE', 'FALSE') NOT NULL DEFAULT 'TRUE',
 
     UNIQUE INDEX `User_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -23,6 +24,7 @@ CREATE TABLE `User` (
 CREATE TABLE `Position` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
+    `is_Active` ENUM('TRUE', 'FALSE') NOT NULL DEFAULT 'TRUE',
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -50,6 +52,7 @@ CREATE TABLE `Employee` (
     `monthlySalary` DOUBLE NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `is_Active` ENUM('TRUE', 'FALSE') NOT NULL DEFAULT 'TRUE',
 
     UNIQUE INDEX `Employee_email_key`(`email`),
     PRIMARY KEY (`id`)
@@ -67,6 +70,7 @@ CREATE TABLE `Shift` (
     `allowedLateMinutes` INTEGER NOT NULL,
     `totalServerdHrPerDay` DOUBLE NOT NULL,
     `scantimeOut` INTEGER NOT NULL,
+    `is_Active` ENUM('TRUE', 'FALSE') NOT NULL DEFAULT 'TRUE',
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -88,6 +92,7 @@ CREATE TABLE `Attendance` (
     `totalServerdHr` INTEGER NULL,
     `totalDiffrence` INTEGER NULL,
     `description` VARCHAR(191) NULL,
+    `is_Active` ENUM('TRUE', 'FALSE') NOT NULL DEFAULT 'TRUE',
     `status` ENUM('PENDING', 'DONE') NOT NULL DEFAULT 'PENDING',
 
     PRIMARY KEY (`id`)
@@ -105,6 +110,7 @@ CREATE TABLE `Payment` (
     `discharge` DOUBLE NOT NULL,
     `bonus` DOUBLE NOT NULL,
     `status` ENUM('PAID', 'PENDING', 'CANCELED') NOT NULL,
+    `is_Active` ENUM('TRUE', 'FALSE') NOT NULL DEFAULT 'TRUE',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 

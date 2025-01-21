@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import NotFound from "../../../Components/NotFound";
 import api, { nPoint } from "../../../Services/api";
 import { Employees } from "./EmployeeList";
+import Swal from "sweetalert2";
 
 function SeeDetails() {
   const { id } = useParams();
@@ -14,13 +15,42 @@ function SeeDetails() {
   }, []);
   const fetch = async () => {
     try {
-      const response = await api.get(`/hrmanager/get-edmploye/${id}`);
+      const response = await api.get(`/hrmanager/get-employe/${id}`);
       setEmployees(response.data.employee);
     } catch (error) {
       console.log(error);
     }
   };
+  const handleDelete = async () => {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
 
+      if (result.isConfirmed) {
+        const response = await api.delete(`/employee/delete/${id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Employee Deleted",
+          text: response.data.message || "Employee deleted successfully!",
+        });
+        window.history.back();
+      }
+    } catch (error: any) {
+      console.error("Error deleting Employee:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.error || "Error deleting Employee!",
+      });
+    }
+  };
   const [isEmailHovered, setIsEmailHovered] = useState(false);
   const [isPhoneHovered, setIsPhoneHovered] = useState(false);
   if (employee === null) {
@@ -235,7 +265,9 @@ function SeeDetails() {
                 >
                   Edit
                 </button>
-                <button className="btn btn-danger px-4">Delete</button>
+                <button className="btn btn-danger px-4" onClick={handleDelete}>
+                  Delete
+                </button>
               </div>
             </div>
           </div>

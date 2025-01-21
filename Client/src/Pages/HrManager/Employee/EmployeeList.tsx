@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import api from "../../../Services/api";
+import api, { nPoint } from "../../../Services/api";
 import { useNavigate } from "react-router-dom";
 
 export interface Employees {
@@ -21,10 +21,12 @@ export interface Employees {
   profilePicture: string;
   region: string;
   shifts: {
+    id: number;
     name: string;
   };
   createdAt: string;
   Position: {
+    id: number;
     name: string;
   };
 }
@@ -39,7 +41,7 @@ function EmployeeList() {
   }, []);
   const fetch = async () => {
     try {
-      const response = await api.get("/hrmanager/get-edmployee");
+      const response = await api.get("/hrmanager/get-employee");
       setEmployees(response.data.employee);
     } catch (error) {
       console.log(error);
@@ -113,7 +115,7 @@ function EmployeeList() {
                   <td>
                     <div className="d-flex align-items-center">
                       <img
-                        src="/images/profile/user-1.jpg"
+                        src={nPoint + employee.profilePicture}
                         className="rounded-circle"
                         width={40}
                         height={40}
@@ -176,19 +178,10 @@ function EmployeeList() {
                         <li>
                           <a
                             className="dropdown-item d-flex align-items-center gap-3"
-                            href="javascript:void(0)"
+                            href={`/manager/employee/edit/${employee.id}`}
                           >
                             <i className="fs-4 ti ti-edit" />
                             Edit
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            className="dropdown-item d-flex align-items-center gap-3"
-                            href="javascript:void(0)"
-                          >
-                            <i className="fs-4 ti ti-trash" />
-                            Delete
                           </a>
                         </li>
                       </ul>

@@ -39,10 +39,18 @@ const employeeSchema = z.object({
   bankAccountNumber: z.string().min(1, "Bank Account Number is required"),
   monthlySalary: z.number().min(1, "Monthly Salary is required"),
   position: z.string().min(1, "Position is required"),
-  idImg: z.any().refine((file) => file?.length > 0, "ID Image is required"),
+  idImg: z
+    .any()
+    .optional()
+    .refine((file) => file instanceof FileList || file === undefined, {
+      message: "Invalid file format",
+    }),
   profileImg: z
     .any()
-    .refine((file) => file?.length > 0, "Profile Image is required"),
+    .optional()
+    .refine((file) => file instanceof FileList || file === undefined, {
+      message: "Invalid file format",
+    }),
 });
 
 type EmployeeForm = z.infer<typeof employeeSchema>;
@@ -57,27 +65,10 @@ function EditEmployee() {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<EmployeeForm>({
     resolver: zodResolver(employeeSchema),
-    defaultValues: {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      email: "",
-      age: 0,
-      phoneNumber: "",
-      region: "",
-      city: "",
-      emergencyContactName: "",
-      emergencyContactPhone: "",
-      shiftId: "",
-      bankAccountNumber: "",
-      monthlySalary: 0,
-      position: "",
-      idImg: null,
-      profileImg: null,
-    },
   });
   if (id === null) {
     return (
@@ -90,20 +81,37 @@ function EditEmployee() {
     const fetch = async () => {
       try {
         const response = await api.get("/employee/get-info-create");
-        const responses = await api.get(`/hrmanager/get-edmploye/${id}`);
-        const employeeData = responses.data.employee;
+        const responses = await api.get(`/hrmanager/get-employe/${id}`);
+
         setEmployees(responses.data.employee);
         setPosition(response.data.position);
         setShifts(response.data.shift);
-        Object.keys(employeeData).forEach((key) => {
-          setValue(key as keyof EmployeeForm, employeeData[key]);
-        });
       } catch (error) {
         console.error("Error fetching employee data:", error);
       }
     };
     fetch();
-  }, [id, setValue]);
+  }, [id]);
+  useEffect(() => {
+    if (employee) {
+      reset({
+        firstName: employee?.firstName || "",
+        middleName: employee?.middleName || "",
+        lastName: employee?.lastName || "",
+        email: employee?.email || "",
+        age: employee?.age || 0,
+        phoneNumber: employee?.phoneNumber || "",
+        region: employee?.region || "",
+        city: employee?.city || "",
+        shiftId: employee?.shifts?.id?.toString() || "",
+        position: employee?.Position?.id?.toString() || "",
+        emergencyContactName: employee?.emergencyContactName || "",
+        emergencyContactPhone: employee?.emergencyContactPhone || "",
+        bankAccountNumber: employee?.bankAccountNumber || "",
+        monthlySalary: employee?.monthlySalary || 0,
+      });
+    }
+  }, [employee, reset]);
   const onSubmit = async (data: EmployeeForm) => {
     setLoading(true);
 
@@ -118,15 +126,20 @@ function EditEmployee() {
         }
       });
 
-      const response = await api.post("/employee/create-employee", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await api.put(
+        `/employee/update-employee/${id}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
       Swal.fire({
         icon: "success",
         title: "Update Employee !",
         text: response.data.message || "Employee Update Succefully",
       });
+      window.history.back();
     } catch (error: any) {
       console.error("Error:", error);
       Swal.fire({
